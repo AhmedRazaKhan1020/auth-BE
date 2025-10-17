@@ -14,20 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://AhmedRazaKhan1020:cadetahmed2008@cluster0.w1yjbb2.mongodb.net/authentication', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-  console.log('💚💛💙 MongoDB connected');
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-});
+mongoose.connect('mongodb+srv://AhmedRazaKhan1020:cadetahmed2008@cluster0.w1yjbb2.mongodb.net/authentication')
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Error:", err));
 
-
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🟢 Server is running on port ${PORT}`);
+app.listen("5000" || 5000, () => {
+  console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
 });
