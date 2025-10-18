@@ -1,4 +1,5 @@
 import authRoutes from './routes/authRoute.js';
+import reportRoutes from './routes/reportRoute.js';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -13,9 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routes
 app.use('/auth', authRoutes);
+app.use('/report', reportRoutes);
 
 // MongoDB connection
-mongoose.connect(process.env.URL_)
+mongoose.connect("mongodb+srv://AhmedRazaKhan1020:cadetahmed2008@cluster0.w1yjbb2.mongodb.net/authentication")
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Error:", err));
 

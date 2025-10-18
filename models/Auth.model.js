@@ -7,7 +7,7 @@ const authSchema = new Schema({
     address: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: Number, default: 0 } // 0 for user, 1 for admin
+    role: { type: Number, default: 1 } // 0 for user, 1 for admin
 })
 
 const authModel = mongoose.model('auth', authSchema);

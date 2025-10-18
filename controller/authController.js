@@ -12,31 +12,55 @@ const register = async (req, res) => {
     }
 };
 
- const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await authModel.findOne({ email, password });  
-        if(user.role === 1){
-              //create token
-            const token =  jwt.sign({ _id: user._id }, "cadetahmed2008", {
-                expiresIn: "7d",
-            });
-            res.status(200).json({ message: 'Admin Login successful',
-                user: { id: user._id, name: user.name, email: user.email, phone: user.phone, address: user.address },
-                token
-            });
-        }else if (user) {
-            res.status(200).json({ message: 'Login successful',
-                user: { id: user._id, name: user.name, email: user.email, phone: user.phone, address: user.address, role: user.role },
-            });
-            localStorage.setItem("token", token);
-        }
-         else {
-            res.status(401).json({ error: 'Invalid email or password' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await authModel.findOne({ email, password });
+
+    // If user not found
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
     }
+
+    // Create token
+    const token = jwt.sign({ _id: user._id }, "cadetahmed2008", {
+      expiresIn: "7d",
+    });
+
+    // Admin login
+    if (user.role === 1) {
+      return res.status(200).json({
+        message: "Admin Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+          role: user.role,
+        },
+        token,
+      });
+    }
+
+    // Normal user login
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        role: user.role,
+      },
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
-// const authController = mongoose.model('authController', authModel);
+
 export {register, login};
