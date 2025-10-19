@@ -30,7 +30,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
     const prompt = `
       You are a helpful medical assistant.
-      Explain this medical report in simple English and Roman Urdu.
+      Explain this medical report asit is in simple English and Roman Urdu.
       File link: ${uploaded.secure_url}
       If it contains lab values, describe if they are normal or abnormal.
     `;
