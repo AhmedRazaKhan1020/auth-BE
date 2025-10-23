@@ -7,7 +7,7 @@ const app = express();
 dotenv.config();
 
 // Middleware
-app.use(cors({origin:process.env.FE_URL}));
+app.use(cors({origin:process.env.FE_URL || "http://localhost:3000"}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
