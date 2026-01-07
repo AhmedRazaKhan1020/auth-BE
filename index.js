@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 
 // MongoDB connection
-mongoose.connect("mongodb+srv://AhmedRazaKhan1020:cadetahmed2008@cluster0.w1yjbb2.mongodb.net/authentication")
+mongoose.connect(process.env.MONGO_URL )
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Error:", err));
 
