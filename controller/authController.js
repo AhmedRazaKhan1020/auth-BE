@@ -83,30 +83,37 @@ const login = async (req, res) => {
 const uploadReport = async (req, res) => {
   try {
     const userId = req.user?._id;
-
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // Upload file to Cloudinary
-    const uploaded = await cloudinary.uploader.upload(req.file.path);
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
 
-    // Delete local file
-    fs.unlinkSync(req.file.path);
+    // Convert buffer → base64
+    const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-    // Generate AI summary
+    // Upload to Cloudinary
+    const uploaded = await cloudinary.uploader.upload(base64File, {
+      folder: "medical-reports",
+      resource_type: "auto",
+    });
+
+    // Gemini AI
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
     const prompt = `
-      You are a helpful medical assistant.
-      Explain this medical report in simple English and Roman Urdu.
-      File link: ${uploaded.secure_url}
-      If it contains lab values, describe if they are normal or abnormal.
-    `;
+You are a helpful medical assistant.
+Explain this medical report in simple English and Roman Urdu.
+Report link: ${uploaded.secure_url}
+If it contains lab values, explain whether they are normal or abnormal.
+`;
 
     const result = await model.generateContent(prompt);
     const aiSummary = result.response.text();
 
-    // Find user and add report
+    // Save to DB
     const user = await authModel.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -119,14 +126,18 @@ const uploadReport = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      message: "Report uploaded and saved to user profile",
+      message: "Report uploaded successfully",
       report: user.report[user.report.length - 1],
     });
   } catch (error) {
     console.error("Upload error:", error);
-    res.status(500).json({ message: "Failed to upload report", error: error.message });
+    res.status(500).json({
+      message: "Failed to upload report",
+      error: error.message,
+    });
   }
 };
+
 
 const getUserReports = async (req, res) => {
   try {

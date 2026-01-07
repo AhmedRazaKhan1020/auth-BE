@@ -1,9 +1,11 @@
 import express from 'express';
 import { register, login, uploadReport,getUserReports } from '../controller/authController.js';
 import requireAuth from '../middleware/authMiddleware.js';
-import multer from 'multer';
+import multer from "multer";
 
-const upload = multer({ dest: 'uploads/' });
+ const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 const router = express.Router();
 
